@@ -59,7 +59,7 @@ public class ChartXAxisRenderer: ChartAxisRendererBase
         }
         else if (_xAxis.labelPosition == .Bottom)
         {
-            drawLabels(context: context, pos: viewPortHandler.contentBottom + yoffset * 1.5)
+            drawLabels(context: context, pos: viewPortHandler.contentBottom + _xAxis.yOffset)
         }
         else if (_xAxis.labelPosition == .BottomInside)
         {

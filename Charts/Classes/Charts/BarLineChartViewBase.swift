@@ -112,11 +112,7 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
         _pinchGestureRecognizer.delegate = self
         _panGestureRecognizer.delegate = self
         
-        self.addGestureRecognizer(_tapGestureRecognizer)
-        self.addGestureRecognizer(_doubleTapGestureRecognizer)
-        self.addGestureRecognizer(_pinchGestureRecognizer)
-        self.addGestureRecognizer(_panGestureRecognizer)
-        
+        _tapGestureRecognizer.enabled = false;
         _doubleTapGestureRecognizer.enabled = _doubleTapToZoomEnabled
         _pinchGestureRecognizer.enabled = _pinchZoomEnabled || _scaleXEnabled || _scaleYEnabled
         _panGestureRecognizer.enabled = _dragEnabled
@@ -198,6 +194,10 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
         _leftYAxisRenderer?.renderGridLines(context: context)
         _rightYAxisRenderer?.renderGridLines(context: context)
         
+        if (_leftAxis.labelPosition == ChartYAxis.YAxisLabelPosition.InsideChart) {
+            _leftYAxisRenderer.renderAxisLabels(context: context);
+        }
+        
         renderer?.drawData(context: context)
         
         if (!_xAxis.isDrawLimitLinesBehindDataEnabled)
@@ -225,7 +225,9 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
         renderer!.drawExtras(context: context)
         
         _xAxisRenderer.renderAxisLabels(context: context)
-        _leftYAxisRenderer.renderAxisLabels(context: context)
+        if (_leftAxis.labelPosition != ChartYAxis.YAxisLabelPosition.InsideChart) {
+            _leftYAxisRenderer.renderAxisLabels(context: context)
+        }
         _rightYAxisRenderer.renderAxisLabels(context: context)
 
         renderer!.drawValues(context: context)
@@ -406,7 +408,7 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
                     || _legend.position == .BelowChartRight
                     || _legend.position == .BelowChartCenter)
                 {
-                    var yOffset = _legend.textHeightMax; // It's possible that we do not need this offset anymore as it is available through the extraOffsets
+                    var yOffset = 0.0;  // _legend.textHeightMax; // It's possible that we do not need this offset anymore as it is available through the extraOffsets
                     offsetBottom += min(_legend.neededHeight + yOffset, _viewPortHandler.chartHeight * _legend.maxSizePercent)
                 }
             }
@@ -424,7 +426,7 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
 
             if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled)
             {
-                var xlabelheight = xAxis.labelHeight * 2.0
+                var xlabelheight = xAxis.labelHeight * 1.5;
                 
                 // offsets for x-labels
                 if (xAxis.labelPosition == .Bottom)
@@ -447,7 +449,7 @@ public class BarLineChartViewBase: ChartViewBase, UIGestureRecognizerDelegate
             offsetBottom += self.extraBottomOffset
             offsetLeft += self.extraLeftOffset
             
-            var minOffset = CGFloat(10.0)
+            var minOffset = CGFloat(0.0)
             
             _viewPortHandler.restrainViewPort(
                 offsetLeft: max(minOffset, offsetLeft),

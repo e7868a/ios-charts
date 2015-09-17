@@ -11,6 +11,7 @@
 
 import Foundation
 import CoreGraphics
+import CoreGraphics;
 import UIKit
 
 public class BubbleChartDataSet: BarLineScatterCandleChartDataSet
